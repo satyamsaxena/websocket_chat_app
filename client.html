@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocket Chat App | Satyam | Full Stack Developer</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #chat {
+      max-width: 400px;
+      width: 100%;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      background-color: #fff;
+    }
+
+    #messages {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .message {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+
+    .user-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-right: 10px;
+      background-color: #1f1f1f; 
+    }
+
+    #messageInput {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 10px;
+      padding: 8px;
+    }
+
+    button {
+      width: 20%;
+      box-sizing: border-box;
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #4c5eaf;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #4583a0;
+    }
+    
+    .received {
+      animation: float 0.5s ease-in-out;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(10px);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="chat">
+    
+    <ul id="messages"></ul>
+    <input type="text" id="messageInput" placeholder="Type a message">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    const socket = new WebSocket('ws://localhost:3000');
+    const messagesList = document.getElementById('messages');
+
+    socket.addEventListener('open', (event) => {
+      console.log('Connected to the WebSocket server');
+    });
+
+    socket.addEventListener('message', (event) => {
+      const li = document.createElement('li');
+      li.textContent = event.data;
+      messagesList.appendChild(li);
+    });
+
+    socket.addEventListener('close', (event) => {
+      console.log('Disconnected from the WebSocket server');
+    });
+
+    function sendMessage() {
+      const messageInput = document.getElementById('messageInput');
+      const message = messageInput.value;
+
+      if (message) {
+        socket.send(message);
+        messageInput.value = '';
+      }
+    }
+  </script>
+</body>
+</html>
